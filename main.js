@@ -65,7 +65,15 @@ class Field {
   static generateField(height, width, percentage) {
     let col = width;
     let row = height;
+    let totalSpace = col*row;
+    let totalHut = Math.floor(percentage*totalSpace);
     let twodimArray = new Array(col).fill(null).map(() => new Array(row).fill(''));
+    const randomNumbers = new Set();
+    while(randomNumbers.length < totalHut) {
+        randomNumbers.add(this.#randomNumber(0,totalSpace));
+    }
+    return randomNumbers;
+
     
   }
 }
