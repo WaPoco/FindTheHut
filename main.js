@@ -13,14 +13,14 @@ class Field {
     this.position = [0,0];
     this.newPosition = [0,0];
   }
-  print() {
-    for(let i = 0; i< this.field.length;i++) {
-      console.log(...this.field[i]);
+  print(array) {
+    for(let i = 0; i< array.length;i++) {
+      console.log(...array[i]);
     }
   }
   startGame() {
     let play = true;
-    this.print();
+    this.print(this.field);
     let direction = prompt('Which way?');
     while (play) {
       while(!(direction=="l" || direction=="r" || direction=="u" || direction=="d")) {
@@ -45,7 +45,7 @@ class Field {
             this.position[0] = this.newPosition[0];
             this.position[1] = this.newPosition[1];
             process.stdout.write('\x1Bc');
-            this.print();
+            this.print(this.field);
             break;
           case pathCharacter:
             this.position[0] = this.newPosition[0];
@@ -59,27 +59,32 @@ class Field {
         direction = "";
     }
   }
-  #randomNumber(min,max) {
-    return Math.floor(Math.random()*(max-min))+min;
-  }
   static generateField(height, width, percentage) {
-    let col = width;
-    let row = height;
+    let col = height;
+    let row = width;
     let totalSpace = col*row;
     let totalHut = Math.floor(percentage*totalSpace);
-    let twodimArray = new Array(col).fill(null).map(() => new Array(row).fill(''));
-    const randomNumbers = new Set();
-    while(randomNumbers.length < totalHut) {
-        randomNumbers.add(this.#randomNumber(0,totalSpace));
+    let twodimArray = new Array(col).fill(null).map(() => new Array(row).fill(fieldCharacter));
+    let randomNumbers = new Set();
+    while(randomNumbers.size < totalHut) {
+        randomNumbers.add(Math.floor(Math.random()*(totalSpace-2)+2));
     }
-    return randomNumbers;
+    const randomNumbersArray = Array.from(randomNumbers);
+    twodimArray[0][0]=pathCharacter;
+    let sign = hole;
+    randomNumbersArray.forEach(
+        function(randomNum,index) {
+            if(index==randomNumbersArray.length-1) {
+                sign=hat;
+            }
+            if(randomNum%row==0) {twodimArray[Math.trunc(randomNum/row)-1][width-1]=sign;}
+            else {twodimArray[Math.trunc(randomNum/row)][(randomNum%row-1)]=sign;};
+        });
+    return twodimArray;
 
-    
   }
 }
-const myField = new Field([
-  ['*', '░', 'O'],
-  ['░', 'O', '░'],
-  ['░', '^', '░']]);
+const myField = new Field(Field.generateField(10,10,0.4));
 myField.startGame();
-setInterval(()=>{process.stdout.write('\x1Bc')},3000);
+//setInterval(()=>{process.stdout.write('\x1Bc')},3000);
+//myField.print(Field.generateField(3,4,0.3));
