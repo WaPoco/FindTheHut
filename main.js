@@ -84,7 +84,10 @@ class Field {
 
   }
 }
-const myField = new Field(Field.generateField(10,10,0.4));
+const fieldA = Field.generateField(5,5,0.4);
+/*
+const myField = new Field();
 myField.startGame();
+*/
 //setInterval(()=>{process.stdout.write('\x1Bc')},3000);
 //myField.print(Field.generateField(3,4,0.3));
