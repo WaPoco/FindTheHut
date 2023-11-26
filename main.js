@@ -1,5 +1,6 @@
 const prompt = require('prompt-sync')({sigint: true});
 const readline = require('readline');
+const { start } = require('repl');
 
 const hat = '^';
 const hole = 'O';
@@ -10,10 +11,10 @@ const direction = [[1,0],[-1,0],[0,-1],[0,1]];
 
 
 class Field {
-  constructor(field) {
+  constructor(field,startposition) {
     this.field = field;
-    this.position = [0,0];
-    this.newPosition = [0,0];
+    this.position = [...startposition];
+    this.newPosition = [...startposition];
   }
   print(array) {
     for(let i = 0; i< array.length;i++) {
@@ -61,7 +62,7 @@ class Field {
         direction = "";
     }
   }
-  static generateField(height, width, percentage) {
+  static generateField(height, width, percentage, startposition) {
       let col = height;
       let row = width;
       let totalSpace = col*row;
@@ -73,7 +74,6 @@ class Field {
         randomNumbers.add(Math.floor(Math.random()*(totalSpace-2)+2));
       }
       let randomNumbersArray = Array.from(randomNumbers);
-      //randomNumbers.clear();
       let sign = hole;
       randomNumbersArray.forEach(
         function(randomNum,index) {
@@ -83,8 +83,8 @@ class Field {
             if(randomNum%row==0) {twodimArray[Math.trunc(randomNum/row)-1][width-1]=sign;}
             else {twodimArray[Math.trunc(randomNum/row)][(randomNum%row-1)]=sign;};
           });
-        } while(Field.check([0,0],[0,0],JSON.parse(JSON.stringify(twodimArray)))==false);
-      twodimArray[0][0]=pathCharacter;
+        } while(Field.check([...startposition],[...startposition],JSON.parse(JSON.stringify(twodimArray)))==false);
+      twodimArray[startposition[0]][startposition[1]]=pathCharacter;
     return twodimArray;
 }
   static check(position=[0,0],newPosition=[0,0],field) {
@@ -113,7 +113,8 @@ class Field {
     return result;  
   }
 }
-const fieldA = Field.generateField(10,10,0.4);
-const myField = new Field(fieldA);
+const startposition =  [Math.floor(Math.random()*10),Math.floor(Math.random()*10)];
+const fieldA = Field.generateField(10,10,0.4,startposition);
+const myField = new Field(fieldA,startposition);
 myField.startGame();
 //setInterval(()=>{process.stdout.write('\x1Bc')},3000);
